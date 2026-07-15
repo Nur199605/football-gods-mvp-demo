@@ -23,10 +23,11 @@
     .tile[data-col="1"],.tile[data-col="2"],.tile[data-col="3"],.tile[data-col="4"]{border-left-width:3px;border-left-color:#050403}
     .symbol{position:absolute;inset:6%;background-repeat:no-repeat;background-position:center;background-size:contain;filter:saturate(1.08) contrast(1.05) drop-shadow(0 5px 4px #0007);transform:scale(.78);transform-origin:center;will-change:transform;transition:filter .18s,transform .18s}
     .tile::after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(90deg,#0004 0,transparent 20%,transparent 80%,#0004 100%);pointer-events:none}
-    .tile.spin .symbol{animation:reelDrop .14s linear infinite;filter:saturate(1.08) contrast(1.06) brightness(1.08)}
+    .tile.spin .symbol{animation:reelDrop .16s linear infinite;filter:saturate(1.12) contrast(1.06) brightness(1.08) blur(1.8px)}
+    .tile[data-col="1"].spin .symbol{animation-delay:-.03s}.tile[data-col="2"].spin .symbol{animation-delay:-.06s}.tile[data-col="3"].spin .symbol{animation-delay:-.09s}.tile[data-col="4"].spin .symbol{animation-delay:-.12s}
     .tile.win{z-index:2;box-shadow:inset 0 0 0 4px #fff3a1,0 0 22px 6px #ffd349;animation:pulse .55s ease-in-out infinite alternate}
     .tile.win .symbol{filter:saturate(1.35) contrast(1.08) brightness(1.16)}
-    @keyframes reelDrop{0%{transform:translateY(-105%) scale(.78)}100%{transform:translateY(0) scale(.78)}}
+    @keyframes reelDrop{0%{transform:translateY(-115%) scale(.72)}72%{transform:translateY(7%) scale(.78)}100%{transform:translateY(115%) scale(.72)}}
     @keyframes pulse{to{box-shadow:inset 0 0 0 3px #fff3a1,0 0 14px 4px #ffd349}}
     .hud{position:absolute;z-index:10;left:8.5%;right:8%;bottom:.8%;height:11.4%;display:grid;grid-template-columns:1fr 1.35fr .9fr 1.35fr;align-items:center;gap:.7%;padding:.45%;pointer-events:none;font-family:Arial,sans-serif;border:2px solid #d4aa50;border-radius:14px;background:linear-gradient(180deg,#103e68 0,#061b34 48%,#030e1e 100%);box-shadow:inset 0 0 0 2px #5b3a12,inset 0 5px 12px #5ebaff22,0 5px 14px #000b}
     .readout{height:82%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-shadow:0 2px 3px #000;font-weight:700;min-width:0;border:1px solid #806229;border-radius:9px;background:linear-gradient(#0c3154,#041426);box-shadow:inset 0 1px 5px #78c8ff22}
@@ -46,6 +47,16 @@
     .sound{right:2.2%;top:2.4%;width:4.5%;aspect-ratio:1;font-size:clamp(11px,2vw,25px)}
     .status{position:absolute;z-index:11;left:32%;right:17%;bottom:12.1%;min-height:4.5%;display:flex;align-items:center;justify-content:center;text-align:center;padding:.25% 1%;border-radius:999px;background:rgba(4,25,50,.82);border:1px solid #d8ad4e;color:#fff1b9;font:700 clamp(8px,1.25vw,16px)/1.2 Arial,sans-serif;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;text-shadow:0 1px 3px #000}
     .status.show{opacity:1;transform:none}.status.big{color:#fff;background:rgba(122,77,4,.9);box-shadow:0 0 18px #ffd75a}
+    .celebration{position:absolute;z-index:18;inset:0;display:grid;place-items:center;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s;background:radial-gradient(circle at 56% 47%,#ffdf6b55 0,#f18c1d22 22%,#020918aa 70%)}
+    .celebration.show{opacity:1;visibility:visible}
+    .celebration::before{content:"";position:absolute;left:56%;top:47%;width:72%;aspect-ratio:1;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,#ffe589aa 0 3deg,transparent 3deg 12deg);mask-image:radial-gradient(circle,#0000 0 13%,#000 18% 54%,#0000 72%);animation:rays 5s linear infinite}
+    .celebration-card{position:relative;text-align:center;transform:scale(.35);opacity:0;filter:drop-shadow(0 10px 20px #000);font-family:Georgia,"Times New Roman",serif}
+    .celebration.show .celebration-card{animation:winPop .55s cubic-bezier(.17,.89,.32,1.35) forwards}
+    .celebration-title{font-weight:900;font-size:clamp(25px,5vw,72px);line-height:.95;letter-spacing:.03em;color:#ffeaa3;-webkit-text-stroke:clamp(1px,.18vw,3px) #713000;text-shadow:0 4px 0 #9d4b00,0 0 10px #fff,0 0 35px #ffb21c}
+    .celebration-amount{margin-top:2%;font:900 clamp(38px,7vw,100px)/1 Arial,sans-serif;color:#fff4b7;-webkit-text-stroke:clamp(1px,.2vw,3px) #8b3500;text-shadow:0 5px 0 #8e3b00,0 0 12px #fff,0 0 38px #ff9d00;animation:amountPulse .48s ease-in-out infinite alternate}
+    @keyframes rays{to{transform:translate(-50%,-50%) rotate(1turn)}}
+    @keyframes winPop{65%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+    @keyframes amountPulse{to{transform:scale(1.055);filter:brightness(1.22)}}
     .modal{position:absolute;z-index:20;inset:0;display:none;place-items:center;padding:5%;background:rgba(1,11,24,.76);backdrop-filter:blur(5px)}
     .modal.open{display:grid}
     .panel{width:min(620px,92%);max-height:88%;overflow:auto;border:2px solid #d6ac4f;border-radius:18px;padding:clamp(16px,3vw,30px);background:var(--panel);box-shadow:0 25px 80px #000;color:#fff;font-family:Arial,sans-serif}
@@ -60,6 +71,9 @@
     <section class="stage" aria-label="Игровой автомат Футбол богов">
       <div class="reels" id="reels" role="img" aria-label="Пять барабанов по четыре символа"></div>
       <div class="status" id="status" aria-live="polite"></div>
+      <div class="celebration" id="celebration" aria-hidden="true">
+        <div class="celebration-card"><div class="celebration-title">ПОБЕДА БОГОВ</div><div class="celebration-amount" id="celebrationAmount">0,00</div></div>
+      </div>
 
       <div class="hud">
         <div class="readout"><small>БАЛАНС</small><strong id="balance">100 000,00</strong></div>
@@ -101,7 +115,7 @@
         fire:{file:'fire',label:'Огонь'}, bonus:{file:'bonus',label:'BONUS'}
       };
       const pool=['boot','captain','gloves','tactics','goal','cup','whistle','helmet','fire','bonus'];
-      const reels=document.getElementById('reels'),balanceEl=document.getElementById('balance'),betEl=document.getElementById('bet'),winEl=document.getElementById('win'),status=document.getElementById('status');
+      const reels=document.getElementById('reels'),balanceEl=document.getElementById('balance'),betEl=document.getElementById('bet'),winEl=document.getElementById('win'),status=document.getElementById('status'),celebration=document.getElementById('celebration'),celebrationAmount=document.getElementById('celebrationAmount');
       const play=document.getElementById('play'),minus=document.getElementById('minus'),plus=document.getElementById('plus'),turbo=document.getElementById('turbo'),sound=document.getElementById('sound');
       let balance=100000,bet=1000,grid=[],busy=false,isTurbo=false,soundOn=true,audio;
       const fmt=n=>n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -127,6 +141,12 @@
         try{audio ||= new (window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;g.gain.value=volume;o.connect(g);g.connect(audio.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);o.stop(audio.currentTime+duration)}catch(e){}
       }
       function show(text,big=false){status.textContent=text;status.className='status show'+(big?' big':'');clearTimeout(show.t);show.t=setTimeout(()=>status.className='status',big?3800:2200)}
+      function celebrate(prize){
+        clearTimeout(celebrate.t);celebration.classList.remove('show');void celebration.offsetWidth;celebration.classList.add('show');celebration.setAttribute('aria-hidden','false');
+        const duration=1900,start=performance.now();
+        const count=now=>{const p=Math.min(1,(now-start)/duration),ease=1-Math.pow(1-p,4);celebrationAmount.textContent=fmt(prize*ease);if(p<1)requestAnimationFrame(count)};
+        requestAnimationFrame(count);celebrate.t=setTimeout(()=>{celebration.classList.remove('show');celebration.setAttribute('aria-hidden','true')},3100);
+      }
       function evaluate(){
         let mult=0,cells=[];
         grid.forEach((row,r)=>{
@@ -157,7 +177,7 @@
           }
           grid=settled;render();const result=evaluate(),prize=bet*result.mult;balance+=prize;balanceEl.textContent=fmt(balance);winEl.textContent=fmt(prize);
           result.cells.forEach(k=>reels.querySelector(`[data-cell="${k}"]`)?.classList.add('win'));
-          if(prize){show(`ПОБЕДА БОГОВ! +${fmt(prize)}`,true);[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.07),i*90))}else{show('Следующий удар может стать легендарным')}
+          if(prize){show(`ПОБЕДА БОГОВ! +${fmt(prize)}`,true);celebrate(prize);[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.07),i*90))}else{show('Следующий удар может стать легендарным')}
         }catch(error){
           render();show('Матч перезапущен — нажмите ИГРАТЬ ещё раз');
         }finally{
