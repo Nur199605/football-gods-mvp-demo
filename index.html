@@ -15,13 +15,13 @@
     .stage{position:relative;aspect-ratio:16/9;overflow:hidden;border:2px solid #b98b31;border-radius:clamp(0px,1.2vw,16px);box-shadow:0 24px 80px #000b,0 0 55px #318ce744;background:var(--art) center/cover no-repeat;isolation:isolate}
     .stage::before{content:"";position:absolute;z-index:9;left:0;right:0;bottom:0;height:13%;background:linear-gradient(180deg,#173f66 0,#071f3a 15%,#04152a 100%);border-top:2px solid #d9ad4d;box-shadow:0 -5px 16px #00101f99;pointer-events:none}
     .stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:8;box-shadow:inset 0 0 45px #00142c88}
-    .reels{position:absolute;z-index:3;left:21.85%;top:15.1%;width:64%;height:72.2%;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:.28%;padding:.35%;overflow:hidden;border:3px solid #b8872f;border-radius:2.2%;background:#241704;box-shadow:inset 0 0 28px #000c,0 0 14px #ffd66b55}
+    .reels{position:absolute;z-index:3;left:21.85%;top:15.1%;width:64%;height:72.2%;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:.35%;padding:.35%;overflow:hidden;border:3px solid #b8872f;border-radius:2.2%;background:#050403;box-shadow:inset 0 0 28px #000c,0 0 14px #ffd66b55}
     .reels::before,.reels::after{content:"";position:absolute;z-index:4;left:0;right:0;height:18%;pointer-events:none}
     .reels::before{top:0;background:linear-gradient(#120900d9,transparent)}
     .reels::after{bottom:0;background:linear-gradient(transparent,#120900d9)}
-    .tile{position:relative;overflow:hidden;border:2px solid #c79a43;background:#eee5d3;box-shadow:inset 0 0 12px #5b3b1044,inset 0 0 0 1px #ffe6a088;contain:paint}
-    .tile[data-col="1"],.tile[data-col="2"],.tile[data-col="3"],.tile[data-col="4"]{border-left-width:2.5px;border-left-color:#9d7024}
-    .symbol{position:absolute;inset:0;background-image:var(--art);background-repeat:no-repeat;background-size:950% 685.72%;filter:saturate(1.06) contrast(1.07);will-change:transform;transition:filter .18s,transform .18s}
+    .tile{position:relative;overflow:hidden;border:3px solid #090806;background:#eee5d3;box-shadow:inset 0 0 0 1px #29231b,inset 0 0 14px #0005;contain:paint}
+    .tile[data-col="1"],.tile[data-col="2"],.tile[data-col="3"],.tile[data-col="4"]{border-left-width:3px;border-left-color:#050403}
+    .symbol{position:absolute;inset:0;background-image:var(--art);background-repeat:no-repeat;background-size:820% 585%;filter:saturate(1.06) contrast(1.07);will-change:transform;transition:filter .18s,transform .18s}
     .tile::after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(90deg,#6f461a30 0,#fff4 18%,transparent 42%,transparent 62%,#5a351f35 100%);pointer-events:none}
     .tile.spin .symbol{animation:reelDrop .14s linear infinite;filter:saturate(1.08) contrast(1.06) brightness(1.08)}
     .tile.win{z-index:2;box-shadow:inset 0 0 0 4px #fff3a1,0 0 22px 6px #ffd349;animation:pulse .55s ease-in-out infinite alternate}
@@ -106,7 +106,7 @@
       let balance=100000,bet=1000,grid=[],busy=false,isTurbo=false,soundOn=true,audio;
       const fmt=n=>n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
       const pick=()=>Math.random()<.065?'wild':pool[Math.floor(Math.random()*pool.length)];
-      const cropPos=s=>`${((crops[s].x+12.5)/(1280-135)*100).toFixed(3)}% ${((crops[s].y+12.5)/(720-105)*100).toFixed(3)}%`;
+      const cropPos=s=>`${((crops[s].x+2)/(1280-156)*100).toFixed(3)}% ${((crops[s].y+3.5)/(720-123)*100).toFixed(3)}%`;
       function makeGrid(){return Array.from({length:4},()=>Array.from({length:5},pick))}
       function render({spinningCols=[]}={}){
         if(!reels.children.length){
