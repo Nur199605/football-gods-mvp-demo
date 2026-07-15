@@ -19,10 +19,10 @@
     .tile{position:relative;overflow:hidden;border:1px solid #9b7429;background:#eee5d3;box-shadow:inset 0 0 10px #5b3b10aa;contain:paint}
     .symbol{position:absolute;inset:0;background-image:var(--art);background-repeat:no-repeat;background-size:800% 553.85%;filter:saturate(1.06) contrast(1.07);will-change:transform;transition:filter .18s,transform .18s}
     .tile::after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(135deg,#fff3 0,transparent 24%,transparent 75%,#5a3b1518 100%);box-shadow:inset 0 0 0 1px #d6b35d;pointer-events:none}
-    .tile.spin .symbol{animation:roll .12s linear infinite;filter:saturate(1.1) contrast(1.08) brightness(1.08)}
+    .tile.spin .symbol{animation:reelDrop .14s linear infinite;filter:saturate(1.08) contrast(1.06) brightness(1.08)}
     .tile.win{z-index:2;box-shadow:inset 0 0 0 4px #fff3a1,0 0 22px 6px #ffd349;animation:pulse .55s ease-in-out infinite alternate}
     .tile.win .symbol{filter:saturate(1.35) contrast(1.08) brightness(1.16)}
-    @keyframes roll{0%{transform:translateY(-28%)}100%{transform:translateY(28%)}}
+    @keyframes reelDrop{0%{transform:translateY(-105%)}100%{transform:translateY(0)}}
     @keyframes pulse{to{box-shadow:inset 0 0 0 3px #fff3a1,0 0 14px 4px #ffd349}}
     .hud{position:absolute;z-index:10;left:10%;right:8.5%;bottom:1.1%;height:10.7%;display:grid;grid-template-columns:1fr 1.35fr .9fr 1.35fr;align-items:center;gap:.8%;pointer-events:none;font-family:Arial,sans-serif}
     .readout{height:78%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-shadow:0 2px 3px #000;font-weight:700;min-width:0;border:1px solid #c99a3e;border-radius:9px;background:linear-gradient(#0c3459,#061a31);box-shadow:inset 0 0 7px #0008}
@@ -104,16 +104,16 @@
       const pick=()=>Math.random()<.065?'wild':pool[Math.floor(Math.random()*pool.length)];
       const cropPos=s=>`${(crops[s].x/(1280-160)*100).toFixed(3)}% ${(crops[s].y/(720-130)*100).toFixed(3)}%`;
       function makeGrid(){return Array.from({length:4},()=>Array.from({length:5},pick))}
-      function render({spinning=false}={}){
+      function render({spinningCols=[]}={}){
         if(!reels.children.length){
           for(let r=0;r<4;r++)for(let c=0;c<5;c++){
             const el=document.createElement('div'),symbol=document.createElement('div');
-            el.className='tile';el.dataset.cell=`${r}-${c}`;symbol.className='symbol';el.appendChild(symbol);reels.appendChild(el);
+            el.className='tile';el.dataset.cell=`${r}-${c}`;el.dataset.col=c;symbol.className='symbol';el.appendChild(symbol);reels.appendChild(el);
           }
         }
         for(let r=0;r<4;r++)for(let c=0;c<5;c++){
           const s=grid[r][c],el=reels.querySelector(`[data-cell="${r}-${c}"]`),symbol=el.querySelector('.symbol');
-          el.classList.remove('win');el.classList.toggle('spin',spinning);el.dataset.symbol=s;el.setAttribute('aria-label',crops[s].label);symbol.style.backgroundPosition=cropPos(s);
+          el.classList.remove('win');el.classList.toggle('spin',spinningCols.includes(c));el.dataset.symbol=s;el.setAttribute('aria-label',crops[s].label);symbol.style.backgroundPosition=cropPos(s);
         }
         balanceEl.textContent=fmt(balance);betEl.textContent=fmt(bet);
       }
@@ -139,11 +139,18 @@
         if(busy)return;if(balance<bet){show('Недостаточно монет — уменьшите ставку');tone(120,.16,'sawtooth');return}
         busy=true;balance-=bet;winEl.textContent=fmt(0);play.disabled=minus.disabled=plus.disabled=true;show('Боги начинают матч…');tone(260,.07,'square');
         try{
-          const steps=isTurbo?5:11,delay=isTurbo?42:72;
-          for(let i=0;i<steps;i++){
-            grid=makeGrid();render({spinning:true});if(i%2===0)tone(180+i*12,.025,'square',.012);await new Promise(r=>setTimeout(r,delay+i*4));
+          const finalGrid=makeGrid(),ticks=isTurbo?13:21,delay=isTurbo?42:58;
+          grid=finalGrid;seedDemoWin();const settled=grid.map(row=>[...row]);
+          for(let i=0;i<ticks;i++){
+            const spinningCols=[];
+            for(let c=0;c<5;c++){
+              const stopAt=ticks-8+c*2;
+              if(i<stopAt){spinningCols.push(c);for(let r=0;r<4;r++)grid[r][c]=pick()}
+              else for(let r=0;r<4;r++)grid[r][c]=settled[r][c];
+            }
+            render({spinningCols});if(i%3===0)tone(170+i*9,.025,'square',.01);await new Promise(r=>setTimeout(r,delay));
           }
-          grid=makeGrid();seedDemoWin();render();const result=evaluate(),prize=bet*result.mult;balance+=prize;balanceEl.textContent=fmt(balance);winEl.textContent=fmt(prize);
+          grid=settled;render();const result=evaluate(),prize=bet*result.mult;balance+=prize;balanceEl.textContent=fmt(balance);winEl.textContent=fmt(prize);
           result.cells.forEach(k=>reels.querySelector(`[data-cell="${k}"]`)?.classList.add('win'));
           if(prize){show(`ПОБЕДА БОГОВ! +${fmt(prize)}`,true);[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.07),i*90))}else{show('Следующий удар может стать легендарным')}
         }catch(error){
