@@ -104,7 +104,7 @@
       const pick=()=>Math.random()<.065?'wild':pool[Math.floor(Math.random()*pool.length)];
       const cropPos=s=>`${(crops[s].x/(1280-160)*100).toFixed(3)}% ${(crops[s].y/(720-130)*100).toFixed(3)}%`;
       function makeGrid(){return Array.from({length:4},()=>Array.from({length:5},pick))}
-      function render(){
+      function render({spinning=false}={}){
         if(!reels.children.length){
           for(let r=0;r<4;r++)for(let c=0;c<5;c++){
             const el=document.createElement('div'),symbol=document.createElement('div');
@@ -113,7 +113,7 @@
         }
         for(let r=0;r<4;r++)for(let c=0;c<5;c++){
           const s=grid[r][c],el=reels.querySelector(`[data-cell="${r}-${c}"]`),symbol=el.querySelector('.symbol');
-          el.classList.remove('win');el.dataset.symbol=s;el.setAttribute('aria-label',crops[s].label);symbol.style.backgroundPosition=cropPos(s);
+          el.classList.remove('win');el.classList.toggle('spin',spinning);el.dataset.symbol=s;el.setAttribute('aria-label',crops[s].label);symbol.style.backgroundPosition=cropPos(s);
         }
         balanceEl.textContent=fmt(balance);betEl.textContent=fmt(bet);
       }
@@ -138,14 +138,19 @@
       async function spin(){
         if(busy)return;if(balance<bet){show('Недостаточно монет — уменьшите ставку');tone(120,.16,'sawtooth');return}
         busy=true;balance-=bet;winEl.textContent=fmt(0);play.disabled=minus.disabled=plus.disabled=true;show('Боги начинают матч…');tone(260,.07,'square');
-        const steps=isTurbo?5:11,delay=isTurbo?42:72;
-        for(let i=0;i<steps;i++){
-          grid=makeGrid();render();reels.querySelectorAll('.tile').forEach(e=>e.classList.add('spin'));tone(180+i*12,.025,'square',.012);await new Promise(r=>setTimeout(r,delay+i*4));
+        try{
+          const steps=isTurbo?5:11,delay=isTurbo?42:72;
+          for(let i=0;i<steps;i++){
+            grid=makeGrid();render({spinning:true});if(i%2===0)tone(180+i*12,.025,'square',.012);await new Promise(r=>setTimeout(r,delay+i*4));
+          }
+          grid=makeGrid();seedDemoWin();render();const result=evaluate(),prize=bet*result.mult;balance+=prize;balanceEl.textContent=fmt(balance);winEl.textContent=fmt(prize);
+          result.cells.forEach(k=>reels.querySelector(`[data-cell="${k}"]`)?.classList.add('win'));
+          if(prize){show(`ПОБЕДА БОГОВ! +${fmt(prize)}`,true);[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.07),i*90))}else{show('Следующий удар может стать легендарным')}
+        }catch(error){
+          render();show('Матч перезапущен — нажмите ИГРАТЬ ещё раз');
+        }finally{
+          busy=false;play.disabled=minus.disabled=plus.disabled=false;
         }
-        grid=makeGrid();seedDemoWin();render();const result=evaluate(),prize=bet*result.mult;balance+=prize;balanceEl.textContent=fmt(balance);winEl.textContent=fmt(prize);
-        result.cells.forEach(k=>reels.querySelector(`[data-cell="${k}"]`)?.classList.add('win'));
-        if(prize){show(`ПОБЕДА БОГОВ! +${fmt(prize)}`,true);[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.07),i*90))}else{show('Следующий удар может стать легендарным')}
-        busy=false;play.disabled=minus.disabled=plus.disabled=false;
       }
       function changeBet(delta){if(busy)return;bet=Math.max(100,Math.min(10000,bet+delta));betEl.textContent=fmt(bet);tone(360,.04)}
       play.addEventListener('click',spin);minus.addEventListener('click',()=>changeBet(-100));plus.addEventListener('click',()=>changeBet(100));
