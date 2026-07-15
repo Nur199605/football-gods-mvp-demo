@@ -15,10 +15,14 @@
     .stage{position:relative;aspect-ratio:16/9;overflow:hidden;border:2px solid #b98b31;border-radius:clamp(0px,1.2vw,16px);box-shadow:0 24px 80px #000b,0 0 55px #318ce744;background:var(--art) center/cover no-repeat;isolation:isolate}
     .stage::before{content:"";position:absolute;z-index:9;left:0;right:0;bottom:0;height:13%;background:linear-gradient(180deg,#173f66 0,#071f3a 15%,#04152a 100%);border-top:2px solid #d9ad4d;box-shadow:0 -5px 16px #00101f99;pointer-events:none}
     .stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:8;box-shadow:inset 0 0 45px #00142c88}
-    .reels{position:absolute;z-index:3;left:21.85%;top:15.1%;width:64%;height:72.2%;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:.25%;padding:.18%;overflow:hidden}
-    .tile{position:relative;overflow:hidden;border:1px solid #9b7429;background:#eee5d3;box-shadow:inset 0 0 10px #5b3b10aa;contain:paint}
-    .symbol{position:absolute;inset:0;background-image:var(--art);background-repeat:no-repeat;background-size:800% 553.85%;filter:saturate(1.06) contrast(1.07);will-change:transform;transition:filter .18s,transform .18s}
-    .tile::after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(135deg,#fff3 0,transparent 24%,transparent 75%,#5a3b1518 100%);box-shadow:inset 0 0 0 1px #d6b35d;pointer-events:none}
+    .reels{position:absolute;z-index:3;left:21.85%;top:15.1%;width:64%;height:72.2%;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:0;padding:.35%;overflow:hidden;border:3px solid #b8872f;border-radius:2.2%;background:#241704;box-shadow:inset 0 0 28px #000c,0 0 14px #ffd66b55}
+    .reels::before,.reels::after{content:"";position:absolute;z-index:4;left:0;right:0;height:18%;pointer-events:none}
+    .reels::before{top:0;background:linear-gradient(#120900d9,transparent)}
+    .reels::after{bottom:0;background:linear-gradient(transparent,#120900d9)}
+    .tile{position:relative;overflow:hidden;border:0;background:#eee5d3;box-shadow:inset 0 0 12px #5b3b1044;contain:paint}
+    .tile[data-col="1"],.tile[data-col="2"],.tile[data-col="3"],.tile[data-col="4"]{border-left:3px solid #b88a35}
+    .symbol{position:absolute;inset:0;background-image:var(--art);background-repeat:no-repeat;background-size:950% 685.72%;filter:saturate(1.06) contrast(1.07);will-change:transform;transition:filter .18s,transform .18s}
+    .tile::after{content:"";position:absolute;z-index:2;inset:0;background:linear-gradient(90deg,#6f461a30 0,#fff4 18%,transparent 42%,transparent 62%,#5a351f35 100%);pointer-events:none}
     .tile.spin .symbol{animation:reelDrop .14s linear infinite;filter:saturate(1.08) contrast(1.06) brightness(1.08)}
     .tile.win{z-index:2;box-shadow:inset 0 0 0 4px #fff3a1,0 0 22px 6px #ffd349;animation:pulse .55s ease-in-out infinite alternate}
     .tile.win .symbol{filter:saturate(1.35) contrast(1.08) brightness(1.16)}
@@ -40,6 +44,13 @@
     .menu{left:2.7%;bottom:2.1%;width:5.3%;aspect-ratio:1;font-size:clamp(15px,2.7vw,35px)}
     .turbo{right:2.5%;bottom:2.1%;width:5.3%;aspect-ratio:1;font-size:clamp(15px,2.7vw,35px)}
     .sound{right:2.2%;top:2.4%;width:4.5%;aspect-ratio:1;font-size:clamp(11px,2vw,25px)}
+    .lever{position:absolute;z-index:13;right:1.1%;top:30%;width:7.2%;height:37%;border:0;background:transparent;cursor:pointer;filter:drop-shadow(0 5px 5px #000a)}
+    .lever-base{position:absolute;left:12%;right:12%;bottom:0;height:35%;border:3px solid #d4ab50;border-radius:45%;background:radial-gradient(circle at 38% 30%,#2388c8,#073b6d 58%,#03172e);box-shadow:inset 0 0 0 4px #4b2d0d,inset 0 0 16px #000}
+    .lever-arm{position:absolute;left:45%;bottom:27%;width:12%;height:60%;transform-origin:50% 100%;transform:rotate(-8deg);border-radius:999px;background:linear-gradient(90deg,#714813,#ffe49a 48%,#815617);box-shadow:0 0 0 2px #4b2e0c;transition:transform .32s cubic-bezier(.2,.8,.25,1)}
+    .lever-ball{position:absolute;left:27%;top:0;width:46%;aspect-ratio:1;border:3px solid #ffd477;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff7bd 0,#dc3345 25%,#8b071d 70%,#34020b 100%);box-shadow:inset -5px -7px 10px #31000d99,0 0 13px #ffca57}
+    .lever.pull .lever-arm{transform:rotate(21deg) translateY(12%)}
+    .lever.pull .lever-ball{transform:translate(17%,38%)}
+    .lever:disabled{cursor:not-allowed;filter:grayscale(.35) drop-shadow(0 5px 5px #000a)}
     .status{position:absolute;z-index:11;left:32%;right:17%;bottom:12.1%;min-height:4.5%;display:flex;align-items:center;justify-content:center;text-align:center;padding:.25% 1%;border-radius:999px;background:rgba(4,25,50,.82);border:1px solid #d8ad4e;color:#fff1b9;font:700 clamp(8px,1.25vw,16px)/1.2 Arial,sans-serif;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none;text-shadow:0 1px 3px #000}
     .status.show{opacity:1;transform:none}.status.big{color:#fff;background:rgba(122,77,4,.9);box-shadow:0 0 18px #ffd75a}
     .modal{position:absolute;z-index:20;inset:0;display:none;place-items:center;padding:5%;background:rgba(1,11,24,.76);backdrop-filter:blur(5px)}
@@ -71,6 +82,7 @@
       <button class="menu" id="menu" aria-label="Правила">☰</button>
       <button class="turbo" id="turbo" aria-label="Турбо-режим" aria-pressed="false">ϟ</button>
       <button class="sound" id="sound" aria-label="Звук" aria-pressed="true">♪</button>
+      <button class="lever" id="lever" aria-label="Потянуть рычаг и запустить барабаны"><span class="lever-ball"></span><span class="lever-arm"></span><span class="lever-base"></span></button>
 
       <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="rules-title">
         <div class="panel">
@@ -98,11 +110,11 @@
       };
       const pool=['boot','captain','gloves','tactics','goal','cup','whistle','helmet','fire','bonus'];
       const reels=document.getElementById('reels'),balanceEl=document.getElementById('balance'),betEl=document.getElementById('bet'),winEl=document.getElementById('win'),status=document.getElementById('status');
-      const play=document.getElementById('play'),minus=document.getElementById('minus'),plus=document.getElementById('plus'),turbo=document.getElementById('turbo'),sound=document.getElementById('sound');
+      const play=document.getElementById('play'),minus=document.getElementById('minus'),plus=document.getElementById('plus'),turbo=document.getElementById('turbo'),sound=document.getElementById('sound'),lever=document.getElementById('lever');
       let balance=100000,bet=1000,grid=[],busy=false,isTurbo=false,soundOn=true,audio;
       const fmt=n=>n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
       const pick=()=>Math.random()<.065?'wild':pool[Math.floor(Math.random()*pool.length)];
-      const cropPos=s=>`${(crops[s].x/(1280-160)*100).toFixed(3)}% ${(crops[s].y/(720-130)*100).toFixed(3)}%`;
+      const cropPos=s=>`${((crops[s].x+12.5)/(1280-135)*100).toFixed(3)}% ${((crops[s].y+12.5)/(720-105)*100).toFixed(3)}%`;
       function makeGrid(){return Array.from({length:4},()=>Array.from({length:5},pick))}
       function render({spinningCols=[]}={}){
         if(!reels.children.length){
@@ -137,7 +149,7 @@
       }
       async function spin(){
         if(busy)return;if(balance<bet){show('Недостаточно монет — уменьшите ставку');tone(120,.16,'sawtooth');return}
-        busy=true;balance-=bet;winEl.textContent=fmt(0);play.disabled=minus.disabled=plus.disabled=true;show('Боги начинают матч…');tone(260,.07,'square');
+        busy=true;balance-=bet;winEl.textContent=fmt(0);play.disabled=minus.disabled=plus.disabled=lever.disabled=true;lever.classList.add('pull');show('Боги начинают матч…');tone(260,.07,'square');
         try{
           const finalGrid=makeGrid(),ticks=isTurbo?13:21,delay=isTurbo?42:58;
           grid=finalGrid;seedDemoWin();const settled=grid.map(row=>[...row]);
@@ -156,11 +168,11 @@
         }catch(error){
           render();show('Матч перезапущен — нажмите ИГРАТЬ ещё раз');
         }finally{
-          busy=false;play.disabled=minus.disabled=plus.disabled=false;
+          busy=false;play.disabled=minus.disabled=plus.disabled=lever.disabled=false;setTimeout(()=>lever.classList.remove('pull'),180);
         }
       }
       function changeBet(delta){if(busy)return;bet=Math.max(100,Math.min(10000,bet+delta));betEl.textContent=fmt(bet);tone(360,.04)}
-      play.addEventListener('click',spin);minus.addEventListener('click',()=>changeBet(-100));plus.addEventListener('click',()=>changeBet(100));
+      play.addEventListener('click',spin);lever.addEventListener('click',spin);minus.addEventListener('click',()=>changeBet(-100));plus.addEventListener('click',()=>changeBet(100));
       turbo.addEventListener('click',()=>{isTurbo=!isTurbo;turbo.setAttribute('aria-pressed',String(isTurbo));turbo.style.filter=isTurbo?'brightness(1.5) saturate(1.4)':'';show(isTurbo?'Турбо-режим включён':'Турбо-режим выключен')});
       sound.addEventListener('click',()=>{soundOn=!soundOn;sound.setAttribute('aria-pressed',String(soundOn));sound.textContent=soundOn?'♪':'×'});
       document.getElementById('menu').addEventListener('click',()=>document.getElementById('modal').classList.add('open'));
