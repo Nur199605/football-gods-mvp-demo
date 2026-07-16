@@ -15,6 +15,23 @@
     .stage{position:relative;aspect-ratio:16/9;overflow:hidden;border:2px solid #b98b31;border-radius:clamp(0px,1.2vw,16px);box-shadow:0 24px 80px #000b,0 0 55px #318ce744;background:var(--art) center/cover no-repeat;isolation:isolate}
     .stage::before{content:"";position:absolute;z-index:9;left:0;right:0;bottom:0;height:13%;background:linear-gradient(180deg,#173f66 0,#071f3a 15%,#04152a 100%);border-top:2px solid #d9ad4d;box-shadow:0 -5px 16px #00101f99;pointer-events:none}
     .stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:8;box-shadow:inset 0 0 45px #00142c88}
+    .ambient{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+    .player-life{position:absolute;left:0;top:0;width:29%;height:88%;background:var(--art) left top/344.83% 113.64% no-repeat;clip-path:polygon(27% 0,72% 0,76% 12%,67% 19%,77% 31%,72% 48%,91% 63%,98% 91%,7% 91%,4% 71%,22% 57%,27% 37%,18% 25%,31% 12%);transform-origin:48% 72%;animation:playerIdle 3.8s ease-in-out infinite;filter:saturate(1.02)}
+    .ball-life{position:absolute;z-index:2;left:9.2%;top:40.8%;width:11.5%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 42% 38%,#fff7bbaa 0,#ffd45244 24%,transparent 62%);mix-blend-mode:screen;animation:ballGlow 2.1s ease-in-out infinite}
+    .crowd-life{position:absolute;right:2%;top:21%;width:19%;height:57%;opacity:.2;clip-path:polygon(0 7%,100% 0,100% 100%,3% 86%);background:radial-gradient(circle,#fff6ca 0 1px,transparent 2px) 0 0/9px 9px,radial-gradient(circle,#78c8ff 0 1px,transparent 2px) 4px 5px/13px 13px;animation:crowdIdle .7s steps(2,end) infinite;mix-blend-mode:screen}
+    .fire-live{position:absolute;width:3.4%;aspect-ratio:.75;opacity:.86;filter:drop-shadow(0 0 6px #ff8a00) drop-shadow(0 0 13px #ff4d00);transform-origin:50% 100%;animation:fireDance .42s ease-in-out infinite alternate}
+    .fire-live::before,.fire-live::after{content:"";position:absolute;inset:0;border-radius:55% 45% 52% 48%/70% 68% 32% 30%;background:radial-gradient(ellipse at 50% 76%,#fff8ad 0 12%,#ffd21f 28%,#ff6a00 55%,#d5230000 72%);transform:rotate(-5deg)}
+    .fire-live::after{inset:20% 22% 4%;filter:brightness(1.45);animation:flameCore .27s ease-in-out infinite alternate-reverse}
+    .fire-a{left:8%;top:7.8%}.fire-b{right:3.1%;top:8.2%}.fire-c{right:3.3%;top:55.5%;width:4.1%}
+    .stage.is-spinning .player-life{animation:playerReady .5s ease-in-out infinite alternate}.stage.is-spinning .ball-life{animation-duration:.45s;filter:brightness(1.5)}
+    .stage.is-spinning .crowd-life{opacity:.38;animation-duration:.24s}.stage.is-spinning .fire-live{animation-duration:.22s;filter:drop-shadow(0 0 12px #fff08a) drop-shadow(0 0 28px #ff4d00)}
+    .stage.is-win .player-life{animation:playerVictory .8s cubic-bezier(.2,.8,.3,1) 3}.stage.is-win .crowd-life{opacity:.65;animation:crowdWin .18s steps(2,end) infinite}.stage.is-win .fire-live{animation:fireWin .22s ease-in-out infinite alternate}
+    @keyframes playerIdle{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-.35%) scale(1.006,1.012)}}
+    @keyframes playerReady{to{transform:translate(-.35%,-.3%) rotate(-.25deg) scale(1.008)}}
+    @keyframes playerVictory{0%,100%{transform:none}40%{transform:translate(1.2%,-1.4%) rotate(1deg) scale(1.018)}70%{transform:translate(-.3%,-.5%) rotate(-.3deg)}}
+    @keyframes ballGlow{50%{transform:scale(1.1);opacity:.55}}
+    @keyframes crowdIdle{to{transform:translateY(-1px)}}@keyframes crowdWin{to{transform:translate(1px,-3px) scaleY(1.02)}}
+    @keyframes fireDance{to{transform:skewX(5deg) scale(.92,1.1)}}@keyframes flameCore{to{transform:translate(5%,-7%) rotate(8deg) scale(.82,1.12)}}@keyframes fireWin{to{transform:translateY(-8%) scale(1.18,1.42);filter:brightness(1.45) drop-shadow(0 0 22px #fff)}}
     .reels{position:absolute;z-index:3;left:21.85%;top:15.1%;width:64%;height:72.2%;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:.35%;padding:.35%;overflow:hidden;border:3px solid #b8872f;border-radius:2.2%;background:#050403;box-shadow:inset 0 0 28px #000c,0 0 14px #ffd66b55}
     .reels::before,.reels::after{content:"";position:absolute;z-index:4;left:0;right:0;height:18%;pointer-events:none}
     .reels::before{top:0;background:linear-gradient(#120900d9,transparent)}
@@ -69,6 +86,7 @@
 <body>
   <main class="app">
     <section class="stage" aria-label="Игровой автомат Футбол богов">
+      <div class="ambient" aria-hidden="true"><div class="player-life"></div><div class="ball-life"></div><div class="crowd-life"></div><i class="fire-live fire-a"></i><i class="fire-live fire-b"></i><i class="fire-live fire-c"></i></div>
       <div class="reels" id="reels" role="img" aria-label="Пять барабанов по четыре символа"></div>
       <div class="status" id="status" aria-live="polite"></div>
       <div class="celebration" id="celebration" aria-hidden="true">
@@ -115,7 +133,7 @@
         fire:{file:'fire',label:'Огонь'}, bonus:{file:'bonus',label:'BONUS'}
       };
       const pool=['boot','captain','gloves','tactics','goal','cup','whistle','helmet','fire','bonus'];
-      const reels=document.getElementById('reels'),balanceEl=document.getElementById('balance'),betEl=document.getElementById('bet'),winEl=document.getElementById('win'),status=document.getElementById('status'),celebration=document.getElementById('celebration'),celebrationAmount=document.getElementById('celebrationAmount');
+      const stage=document.querySelector('.stage'),reels=document.getElementById('reels'),balanceEl=document.getElementById('balance'),betEl=document.getElementById('bet'),winEl=document.getElementById('win'),status=document.getElementById('status'),celebration=document.getElementById('celebration'),celebrationAmount=document.getElementById('celebrationAmount');
       const play=document.getElementById('play'),minus=document.getElementById('minus'),plus=document.getElementById('plus'),turbo=document.getElementById('turbo'),sound=document.getElementById('sound');
       let balance=100000,bet=1000,grid=[],busy=false,isTurbo=false,soundOn=true,audio;
       const fmt=n=>n.toLocaleString('ru-RU',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -162,7 +180,7 @@
       }
       async function spin(){
         if(busy)return;if(balance<bet){show('Недостаточно монет — уменьшите ставку');tone(120,.16,'sawtooth');return}
-        busy=true;balance-=bet;winEl.textContent=fmt(0);play.disabled=minus.disabled=plus.disabled=true;show('Боги начинают матч…');tone(260,.07,'square');
+        busy=true;stage.classList.remove('is-win');stage.classList.add('is-spinning');balance-=bet;winEl.textContent=fmt(0);play.disabled=minus.disabled=plus.disabled=true;show('Боги начинают матч…');tone(260,.07,'square');
         try{
           const finalGrid=makeGrid(),ticks=isTurbo?13:21,delay=isTurbo?42:58;
           grid=finalGrid;seedDemoWin();const settled=grid.map(row=>[...row]);
@@ -177,11 +195,11 @@
           }
           grid=settled;render();const result=evaluate(),prize=bet*result.mult;balance+=prize;balanceEl.textContent=fmt(balance);winEl.textContent=fmt(prize);
           result.cells.forEach(k=>reels.querySelector(`[data-cell="${k}"]`)?.classList.add('win'));
-          if(prize){show(`ПОБЕДА БОГОВ! +${fmt(prize)}`,true);celebrate(prize);[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.07),i*90))}else{show('Следующий удар может стать легендарным')}
+          stage.classList.remove('is-spinning');if(prize){stage.classList.add('is-win');setTimeout(()=>stage.classList.remove('is-win'),3200);show(`ПОБЕДА БОГОВ! +${fmt(prize)}`,true);celebrate(prize);[440,554,659,880].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.07),i*90))}else{show('Следующий удар может стать легендарным')}
         }catch(error){
           render();show('Матч перезапущен — нажмите ИГРАТЬ ещё раз');
         }finally{
-          busy=false;play.disabled=minus.disabled=plus.disabled=false;
+          stage.classList.remove('is-spinning');busy=false;play.disabled=minus.disabled=plus.disabled=false;
         }
       }
       function changeBet(delta){if(busy)return;bet=Math.max(100,Math.min(10000,bet+delta));betEl.textContent=fmt(bet);tone(360,.04)}
